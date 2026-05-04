@@ -265,6 +265,425 @@
     .melhorias-table tbody td.col-date::before { content: attr(data-label) ': '; color: var(--muted); }
     .melhorias-table tbody td.col-prazo::before { content: 'Prazo: '; color: var(--muted); }
   }
+
+  /* Observações expansíveis (+) por melhoria */
+  .melhorias-table .col-obs {
+    width: 88px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .obs-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    margin: 0 2px;
+    padding: 0;
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    background: var(--surface2);
+    color: var(--brand);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .obs-toggle:hover {
+    border-color: var(--accent);
+    background: rgba(80,50,148,.18);
+    color: #fff;
+  }
+  .obs-toggle.aberto {
+    background: var(--brand);
+    border-color: var(--brand-dk);
+    color: #2b1547;
+  }
+  tr.obs-row > td {
+    padding: 0 12px 12px !important;
+    background: rgba(80,50,148,.06);
+  }
+  tr.obs-row.hidden { display: none; }
+  .obs-wrapper {
+    display: grid;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--brand);
+    border-radius: 8px;
+  }
+  .obs-field-label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--brand);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .obs-textarea {
+    width: 100%;
+    min-height: 280px;
+    padding: 14px 16px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-main);
+    font-size: 12px;
+    line-height: 1.5;
+    resize: vertical;
+    transition: border-color .15s;
+  }
+  .obs-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+  .obs-saved-flag {
+    font-size: 10px;
+    color: var(--green);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .obs-saved-flag.show { opacity: 1; }
+
+
+  /* Cabeçalho da observação (label + status) e novos campos editáveis */
+  .obs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .obs-header .obs-field-label { margin-bottom: 0; }
+
+  /* Inputs editáveis dentro das células da tabela */
+  .cell-date,
+  .cell-prazo-select,
+  .cell-meses-select,
+  .status-select,
+  .obs-status-select {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 4px 8px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .cell-date {
+    width: 130px;
+    color-scheme: dark;
+  }
+  .cell-prazo-select { width: 64px; text-align: center; color: var(--brand); font-weight: 700; }
+  .cell-meses-select { width: 64px; text-align: center; color: var(--brand); font-weight: 700; }
+  .cell-date:hover, .cell-prazo-select:hover, .cell-meses-select:hover,
+  .status-select:hover, .obs-status-select:hover { border-color: var(--accent); }
+  .cell-date:focus, .cell-prazo-select:focus, .cell-meses-select:focus,
+  .status-select:focus, .obs-status-select:focus { outline: none; border-color: var(--accent); }
+
+  /* Status do row inteiro */
+  .status-select {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    min-width: 130px;
+  }
+  .status-select.status-naoiniciada    { background: rgba(251,191,36,.10); color: var(--yellow); border-color: rgba(251,191,36,.4); }
+  .status-select.status-emandamento    { background: rgba(59,130,246,.10); color: var(--blue);   border-color: rgba(59,130,246,.4); }
+  .status-select.status-concluida      { background: rgba(168,204,58,.10); color: var(--brand);  border-color: rgba(168,204,58,.4); }
+  .status-select.status-compendencias  { background: rgba(251,146,60,.12); color: #fb923c;       border-color: rgba(251,146,60,.4); }
+  .status-select.status-naoconcluida   { background: rgba(248,113,113,.10); color: var(--red);   border-color: rgba(248,113,113,.4); }
+
+  /* Status da observação */
+  .obs-status-select {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    min-width: 150px;
+  }
+  .obs-status-select.status-executado    { background: rgba(52,211,153,.12); color: var(--green); border-color: rgba(52,211,153,.4); }
+  .obs-status-select.status-naoexecutado { background: rgba(248,113,113,.10); color: var(--red);   border-color: rgba(248,113,113,.4); }
+  .obs-status-select.status-emandamento  { background: rgba(59,130,246,.10); color: var(--blue);  border-color: rgba(59,130,246,.4); }
+
+  /* Para que as opções dentro do dropdown saiam legíveis no fundo escuro */
+  .status-select option,
+  .obs-status-select option,
+  .cell-prazo-select option,
+  .cell-meses-select option { background: var(--surface); color: var(--text); }
+
+
+  /* === Atualização: cores harmonizadas + appearance:none === */
+  .status-select,
+  .obs-status-select,
+  .cell-prazo-select,
+  .cell-meses-select,
+  .action-status-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: var(--bg);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23cdd9ee' d='M0 0l6 8 6-8z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 9px 6px;
+    padding-right: 26px !important;
+  }
+  .status-select option,
+  .obs-status-select option,
+  .cell-prazo-select option,
+  .cell-meses-select option,
+  .action-status-select option {
+    background: var(--surface);
+    color: var(--text);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 500;
+  }
+
+  /* Cores por status — versão harmonizada */
+  .status-select.status-naoiniciada,
+  .obs-status-select.status-naoiniciado,
+  .obs-status-select.status-naoiniciada,
+  .action-status-select.status-naoiniciada {
+    background-color: rgba(148,163,184,.10) !important;
+    color: #94a3b8 !important;
+    border-color: rgba(148,163,184,.45) !important;
+  }
+  .status-select.status-emandamento,
+  .obs-status-select.status-emandamento,
+  .action-status-select.status-emandamento {
+    background-color: rgba(251,191,36,.10) !important;
+    color: var(--yellow) !important;
+    border-color: rgba(251,191,36,.45) !important;
+  }
+  .status-select.status-concluida,
+  .obs-status-select.status-executado,
+  .action-status-select.status-concluida {
+    background-color: rgba(52,211,153,.12) !important;
+    color: var(--green) !important;
+    border-color: rgba(52,211,153,.45) !important;
+  }
+  .status-select.status-naoconcluida,
+  .obs-status-select.status-naoexecutado,
+  .action-status-select.status-naoconcluida {
+    background-color: rgba(248,113,113,.10) !important;
+    color: var(--red) !important;
+    border-color: rgba(248,113,113,.45) !important;
+  }
+  .status-select.status-compendencias,
+  .action-status-select.status-concluidaparcialmente {
+    background-color: rgba(251,146,60,.12) !important;
+    color: #fb923c !important;
+    border-color: rgba(251,146,60,.45) !important;
+  }
+
+  /* O chevron precisa "puxar" a cor do status — recoloriza por variante */
+  .status-select.status-naoiniciada,
+  .obs-status-select.status-naoiniciado,
+  .obs-status-select.status-naoiniciada,
+  .action-status-select.status-naoiniciada {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%2394a3b8' d='M0 0l6 8 6-8z'/></svg>");
+  }
+  .status-select.status-emandamento,
+  .obs-status-select.status-emandamento,
+  .action-status-select.status-emandamento {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23fbbf24' d='M0 0l6 8 6-8z'/></svg>");
+  }
+  .status-select.status-concluida,
+  .obs-status-select.status-executado,
+  .action-status-select.status-concluida {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%2334d399' d='M0 0l6 8 6-8z'/></svg>");
+  }
+  .status-select.status-naoconcluida,
+  .obs-status-select.status-naoexecutado,
+  .action-status-select.status-naoconcluida {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23f87171' d='M0 0l6 8 6-8z'/></svg>");
+  }
+  .status-select.status-compendencias,
+  .action-status-select.status-concluidaparcialmente {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23fb923c' d='M0 0l6 8 6-8z'/></svg>");
+  }
+
+  /* Action status (pill grande) */
+  .action-status-select {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 6px 28px 6px 14px;
+    min-width: 200px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    height: fit-content;
+    cursor: pointer;
+  }
+
+  /* Datas e selects dentro do meta da action card */
+  .meta {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+  }
+  .meta-item .cell-date,
+  .meta-item .cell-prazo-select,
+  .meta-item .cell-meses-select {
+    font-size: 13px !important;
+    width: 100%;
+    padding: 6px 28px 6px 10px !important;
+    color: #e8f0fe;
+    font-weight: 600;
+  }
+
+
+  /* === Override final v2: branco para Não iniciada + força fundo escuro === */
+  select.status-select,
+  select.obs-status-select,
+  select.cell-prazo-select,
+  select.cell-meses-select,
+  select.action-status-select {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-color: var(--bg) !important;
+    color: var(--text) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 6px !important;
+    color-scheme: dark;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23cdd9ee' d='M0 0l6 8 6-8z'/></svg>") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 8px center !important;
+    background-size: 9px 6px !important;
+    padding-right: 26px !important;
+    text-transform: uppercase !important;
+    letter-spacing: .05em !important;
+    font-weight: 700 !important;
+    font-family: var(--font-mono) !important;
+  }
+
+  /* "Não iniciada" agora em branco */
+  select.status-select.status-naoiniciada,
+  select.obs-status-select.status-naoiniciado,
+  select.obs-status-select.status-naoiniciada,
+  select.action-status-select.status-naoiniciada {
+    background-color: rgba(255,255,255,.04) !important;
+    color: #ffffff !important;
+    border-color: rgba(255,255,255,.30) !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23ffffff' d='M0 0l6 8 6-8z'/></svg>") !important;
+  }
+
+  /* As outras cores reforçadas */
+  select.status-select.status-emandamento,
+  select.obs-status-select.status-emandamento,
+  select.action-status-select.status-emandamento {
+    background-color: rgba(251,191,36,.10) !important;
+    color: var(--yellow) !important;
+    border-color: rgba(251,191,36,.45) !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23fbbf24' d='M0 0l6 8 6-8z'/></svg>") !important;
+  }
+  select.status-select.status-concluida,
+  select.obs-status-select.status-executado,
+  select.action-status-select.status-concluida {
+    background-color: rgba(52,211,153,.12) !important;
+    color: var(--green) !important;
+    border-color: rgba(52,211,153,.45) !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%2334d399' d='M0 0l6 8 6-8z'/></svg>") !important;
+  }
+  select.status-select.status-naoconcluida,
+  select.obs-status-select.status-naoexecutado,
+  select.action-status-select.status-naoconcluida {
+    background-color: rgba(248,113,113,.10) !important;
+    color: var(--red) !important;
+    border-color: rgba(248,113,113,.45) !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23f87171' d='M0 0l6 8 6-8z'/></svg>") !important;
+  }
+  select.status-select.status-compendencias,
+  select.action-status-select.status-concluidaparcialmente {
+    background-color: rgba(251,146,60,.12) !important;
+    color: #fb923c !important;
+    border-color: rgba(251,146,60,.45) !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23fb923c' d='M0 0l6 8 6-8z'/></svg>") !important;
+  }
+
+  /* Estatística adicional na unidade */
+  .unit-stats .pct-conc { color: var(--brand); font-family: var(--font-mono); }
+
+
+  /* === Override v3: selects de Status dentro da tabela usam o mesmo visual
+        do botão de Status do cabeçalho da ação, com tamanho ajustado === */
+  .melhorias-table select.status-select.action-status-select {
+    min-width: 140px !important;
+    font-size: 10px !important;
+    padding: 5px 24px 5px 10px !important;
+  }
+  /* idem para o status da observação dentro da obs-row */
+  .obs-row select.obs-status-select {
+    min-width: 150px !important;
+    font-size: 10px !important;
+  }
+
+
+  /* Ajuste final solicitado: status de ação e tabela */
+  select.status-select.status-compendencias,
+  select.action-status-select.status-compendencias {
+    background-color: rgba(251,146,60,.12) !important;
+    color: #fb923c !important;
+    border-color: rgba(251,146,60,.45) !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23fb923c' d='M0 0l6 8 6-8z'/></svg>") !important;
+  }
+
+  select.status-select.status-naoconcluida,
+  select.action-status-select.status-naoconcluida {
+    background-color: rgba(248,113,113,.10) !important;
+    color: var(--red) !important;
+    border-color: rgba(248,113,113,.45) !important;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path fill='%23f87171' d='M0 0l6 8 6-8z'/></svg>") !important;
+  }
+
+
+  /* === Abas, progresso, JSON e calendário === */
+  .top-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 18px; }
+  .tab-btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border: 1px solid var(--border2); border-radius: 10px; background: var(--surface); color: var(--text); font-family: var(--font-main); font-size: 12px; font-weight: 700; cursor: pointer; transition: all .15s; }
+  .tab-btn:hover, .tab-btn.active { border-color: var(--accent); background: var(--surface2); color: #fff; }
+  .tab-section.hidden { display: none; }
+  .action-progress { background: rgba(59,130,246,.10) !important; color: var(--blue) !important; border-color: rgba(59,130,246,.35) !important; }
+  .calendar-toolbar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; margin: 14px 0; }
+  .calendar-toolbar select { font-family: var(--font-mono); font-size: 12px; padding: 8px 28px 8px 10px; background: var(--bg); color: var(--text); border: 1px solid var(--border2); border-radius: 8px; }
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(120px, 1fr)); gap: 8px; }
+  .calendar-weekday { color: var(--brand); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; padding: 6px 8px; }
+  .calendar-day { min-height: 118px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 8px; }
+  .calendar-day.outside { opacity: .35; }
+  .calendar-date { font-family: var(--font-mono); font-size: 11px; color: #e8f0fe; font-weight: 700; margin-bottom: 6px; }
+  .calendar-item { margin-top: 5px; padding: 5px 6px; border: 1px solid rgba(168,204,58,.25); border-left: 3px solid var(--brand); border-radius: 6px; background: rgba(168,204,58,.08); font-size: 10px; line-height: 1.35; color: var(--text); }
+  .calendar-item strong { display: block; color: #fff; font-size: 10px; }
+  .calendar-item span { display: block; color: var(--muted); }
+  .calendar-empty { color: var(--muted); font-size: 12px; padding: 12px; }
+
+  /* Agenda Kanban */
+  .agenda-kanban { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; align-items: start; }
+  .kanban-day { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 10px; min-height: 92px; }
+  .kanban-day-header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .kanban-day-title { font-family: var(--font-mono); font-size: 12px; color: #e8f0fe; font-weight: 700; }
+  .kanban-day-count { font-family: var(--font-mono); font-size: 10px; color: var(--brand); font-weight: 700; }
+  .kanban-card { margin-top: 7px; padding: 8px 9px; border: 1px solid rgba(168,204,58,.25); border-left: 4px solid var(--brand); border-radius: 8px; background: rgba(168,204,58,.08); font-size: 11px; line-height: 1.35; }
+  .kanban-card strong { display: block; color: #fff; font-size: 11px; }
+  .kanban-card .kanban-status { display: block; margin-top: 5px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; }
+  .kanban-card.status-concluida { border-left-color: var(--green); background: rgba(52,211,153,.08); }
+  .kanban-card.status-emandamento { border-left-color: var(--yellow); background: rgba(251,191,36,.08); }
+  .kanban-card.status-naoconcluida { border-left-color: var(--red); background: rgba(248,113,113,.08); }
+  .kanban-card.status-compendencias { border-left-color: #fb923c; background: rgba(251,146,60,.08); }
+  .kanban-card.status-naoiniciada { border-left-color: rgba(255,255,255,.7); background: rgba(255,255,255,.04); }
+  @media (max-width: 900px) { .calendar-grid, .agenda-kanban { grid-template-columns: 1fr; } .calendar-weekday { display: none; } }
+
 </style>
 </head>
 <body>
@@ -274,10 +693,13 @@
       <span class="header-badge">RESET</span>
       <div>
         <h1>Sistema RESET — Execução e Controle Operacional</h1>
-        <p>Bolix · 4 unidades · 48 ações · 667 melhorias · 16/03/2026 → 31/10/2027</p>
+        <p>Bolix · 4 unidades · 48 ações · 672 melhorias · 16/03/2026 → 31/10/2027</p>
       </div>
     </div>
     <div class="header-right">
+      <button class="btn" onclick="exportarJSON()">⬇️ Exportar JSON</button>
+      <button class="btn" onclick="document.getElementById('json-import-input').click()">⬆️ Importar JSON</button>
+      <input id="json-import-input" type="file" accept="application/json,.json" style="display:none" onchange="importarJSON(event)">
       <button class="btn" onclick="window.print()">🖨️ Imprimir</button>
     </div>
   </div>
@@ -286,19 +708,41 @@
 <div class="container">
   <div class="summary">
     <div class="summary-card"><strong>16/03/2026</strong><span>Início da fase estratégica</span></div>
-    <div class="summary-card"><strong>48</strong><span>Ações lançadas no calendário</span></div>
-    <div class="summary-card"><strong>667</strong><span>Melhorias associadas às ações</span></div>
+    <div class="summary-card"><strong id="summary-acoes-total">48</strong><span>Ações lançadas no calendário</span></div>
+    <div class="summary-card"><strong id="summary-melhorias-total">0</strong><span>Melhorias associadas às ações</span></div>
     <div class="summary-card"><strong>31/10/2027</strong><span>Limite visual do calendário</span></div>
   </div>
 
-  <h2>Unidades</h2>
+  <div class="top-tabs">
+    <button class="tab-btn active" id="tab-unidades" type="button" onclick="showTab('unidades')">Unidades</button>
+    <button class="tab-btn" id="tab-calendario" type="button" onclick="showTab('calendario')">Agenda Kanban</button>
+  </div>
 
-  <div class="unit-buttons" id="unit-buttons"></div>
+  <section id="section-unidades" class="tab-section">
+    <h2>Unidades</h2>
 
-  <div id="abc"        class="panel hidden"><h2 id="abc-title"></h2><p id="abc-info"></p><div id="abc-actions"        class="action-list"></div></div>
-  <div id="patio"      class="panel hidden"><h2 id="patio-title"></h2><p id="patio-info"></p><div id="patio-actions"      class="action-list"></div></div>
-  <div id="interlagos" class="panel hidden"><h2 id="interlagos-title"></h2><p id="interlagos-info"></p><div id="interlagos-actions" class="action-list"></div></div>
-  <div id="guarulhos"  class="panel hidden"><h2 id="guarulhos-title"></h2><p id="guarulhos-info"></p><div id="guarulhos-actions"  class="action-list"></div></div>
+    <div class="unit-buttons" id="unit-buttons"></div>
+
+    <div id="abc"        class="panel hidden"><h2 id="abc-title"></h2><p id="abc-info"></p><div id="abc-actions"        class="action-list"></div></div>
+    <div id="patio"      class="panel hidden"><h2 id="patio-title"></h2><p id="patio-info"></p><div id="patio-actions"      class="action-list"></div></div>
+    <div id="interlagos" class="panel hidden"><h2 id="interlagos-title"></h2><p id="interlagos-info"></p><div id="interlagos-actions" class="action-list"></div></div>
+    <div id="guarulhos"  class="panel hidden"><h2 id="guarulhos-title"></h2><p id="guarulhos-info"></p><div id="guarulhos-actions"  class="action-list"></div></div>
+  </section>
+
+  <section id="section-calendario" class="tab-section hidden">
+    <div class="panel">
+      <h2>Agenda Kanban</h2>
+      <p>Melhorias agrupadas por data de início. Cada card mostra unidade, ação, melhoria e status.</p>
+      <div class="calendar-toolbar">
+        <div>
+          <label class="obs-field-label" for="calendar-month">Mês</label>
+          <select id="calendar-month" onchange="renderCalendar()"></select>
+        </div>
+        <div id="calendar-count" class="unit-stats"></div>
+      </div>
+      <div id="calendar-grid" class="agenda-kanban"></div>
+    </div>
+  </section>
 </div>
 
 <script>
@@ -373,7 +817,7 @@
       "inicio": "30/04/2026",
       "previsao": "10/06/2026",
       "prazo": "41 dias",
-      "qtd_melhorias": 11,
+      "qtd_melhorias": 13,
       "status": "Não iniciada",
       "melhorias": [
         {
@@ -433,6 +877,14 @@
           "status": "Não iniciada"
         },
         {
+          "idm": "M08",
+          "desc": "Fase 4: Após a transição e o levantamento das informações, iniciar o planejamento dos próximos 10 dias de conteúdo.",
+          "inicio": "16/05/2026",
+          "prazo": 4,
+          "previsao": "20/05/2026",
+          "status": "Não iniciada"
+        },
+        {
           "idm": "M09",
           "desc": "Fase 4: * Esse planejamento já deverá considerar: 1) informações das unidades; 2) banco de imagens disponível; 3) prioridades comerciais; 4) necessidades de divulgação; 5) percepção local de cada operação.",
           "inicio": "16/05/2026",
@@ -459,6 +911,14 @@
         {
           "idm": "M12",
           "desc": "Fase 5: * Transformar a gestão das redes em uma rotina contínua, com calendário, pauta, produção, aprovação e publicação.",
+          "inicio": "03/06/2026",
+          "prazo": 7,
+          "previsao": "10/06/2026",
+          "status": "Não iniciada"
+        },
+        {
+          "idm": "M13",
+          "desc": "Implementação do banco de dados de clientes",
           "inicio": "03/06/2026",
           "prazo": 7,
           "previsao": "10/06/2026",
@@ -1451,7 +1911,7 @@
       "inicio": "30/04/2026",
       "previsao": "10/06/2026",
       "prazo": "41 dias",
-      "qtd_melhorias": 12,
+      "qtd_melhorias": 13,
       "status": "Não iniciada",
       "melhorias": [
         {
@@ -1512,7 +1972,7 @@
         },
         {
           "idm": "M08",
-          "desc": "Fase 4: Após a transição e o levantamento das informações, iniciar o planejamento dos próximos 10 dias de conteúdo",
+          "desc": "Fase 4: Após a transição e o levantamento das informações, iniciar o planejamento dos próximos 10 dias de conteúdo.",
           "inicio": "16/05/2026",
           "prazo": 4,
           "previsao": "20/05/2026",
@@ -1545,6 +2005,14 @@
         {
           "idm": "M12",
           "desc": "Fase 5: * Transformar a gestão das redes em uma rotina contínua, com calendário, pauta, produção, aprovação e publicação.",
+          "inicio": "03/06/2026",
+          "prazo": 7,
+          "previsao": "10/06/2026",
+          "status": "Não iniciada"
+        },
+        {
+          "idm": "M13",
+          "desc": "Implementação do banco de dados de clientes",
           "inicio": "03/06/2026",
           "prazo": 7,
           "previsao": "10/06/2026",
@@ -2769,7 +3237,7 @@
       "inicio": "30/04/2026",
       "previsao": "10/06/2026",
       "prazo": "41 dias",
-      "qtd_melhorias": 12,
+      "qtd_melhorias": 13,
       "status": "Não iniciada",
       "melhorias": [
         {
@@ -2830,7 +3298,7 @@
         },
         {
           "idm": "M08",
-          "desc": "Fase 4: Após a transição e o levantamento das informações, iniciar o planejamento dos próximos 10 dias de conteúdo",
+          "desc": "Fase 4: Após a transição e o levantamento das informações, iniciar o planejamento dos próximos 10 dias de conteúdo.",
           "inicio": "16/05/2026",
           "prazo": 4,
           "previsao": "20/05/2026",
@@ -2863,6 +3331,14 @@
         {
           "idm": "M12",
           "desc": "Fase 5: * Transformar a gestão das redes em uma rotina contínua, com calendário, pauta, produção, aprovação e publicação.",
+          "inicio": "03/06/2026",
+          "prazo": 7,
+          "previsao": "10/06/2026",
+          "status": "Não iniciada"
+        },
+        {
+          "idm": "M13",
+          "desc": "Implementação do banco de dados de clientes",
           "inicio": "03/06/2026",
           "prazo": 7,
           "previsao": "10/06/2026",
@@ -4399,7 +4875,7 @@
       "inicio": "30/04/2026",
       "previsao": "10/06/2026",
       "prazo": "41 dias",
-      "qtd_melhorias": 12,
+      "qtd_melhorias": 13,
       "status": "Não iniciada",
       "melhorias": [
         {
@@ -4460,7 +4936,7 @@
         },
         {
           "idm": "M08",
-          "desc": "Fase 4: Após a transição e o levantamento das informações, iniciar o planejamento dos próximos 10 dias de conteúdo",
+          "desc": "Fase 4: Após a transição e o levantamento das informações, iniciar o planejamento dos próximos 10 dias de conteúdo.",
           "inicio": "16/05/2026",
           "prazo": 4,
           "previsao": "20/05/2026",
@@ -4493,6 +4969,14 @@
         {
           "idm": "M12",
           "desc": "Fase 5: * Transformar a gestão das redes em uma rotina contínua, com calendário, pauta, produção, aprovação e publicação.",
+          "inicio": "03/06/2026",
+          "prazo": 7,
+          "previsao": "10/06/2026",
+          "status": "Não iniciada"
+        },
+        {
+          "idm": "M13",
+          "desc": "Implementação do banco de dados de clientes",
           "inicio": "03/06/2026",
           "prazo": 7,
           "previsao": "10/06/2026",
@@ -6281,19 +6765,176 @@
   };
 
   function statusClass(s) {
-    return s.toLowerCase().replace(/\s+/g, '').replace(/[áàâ]/g,'a').replace(/[éê]/g,'e').replace(/[í]/g,'i').replace(/[óôõ]/g,'o').replace(/[ú]/g,'u').replace(/[ç]/g,'c');
+    const status = String(s || '').trim();
+    const mapa = {
+      'Não iniciada': 'naoiniciada',
+      'Não iniciado': 'naoiniciado',
+      'Em andamento': 'emandamento',
+      'Concluída': 'concluida',
+      'Executado': 'executado',
+      'Não executado': 'naoexecutado',
+      'Não concluída': 'naoconcluida',
+      'Com pendência': 'compendencias',
+      'Com pendências': 'compendencias',
+      'Concluída parcialmente': 'compendencias'
+    };
+    if (mapa[status]) return mapa[status];
+    return status.toLowerCase()
+      .replace(/\s+/g, '')
+      .replace(/[áàâã]/g,'a')
+      .replace(/[éê]/g,'e')
+      .replace(/[í]/g,'i')
+      .replace(/[óôõ]/g,'o')
+      .replace(/[ú]/g,'u')
+      .replace(/[ç]/g,'c');
+  }
+
+  function contarMelhorias(action) {
+    return Array.isArray(action.melhorias) ? action.melhorias.length : 0;
+  }
+
+  function getMelhoriaId(unidade, action, m) {
+    return (unidade + '-' + action.idac + '-' + m.idm).replace(/[^a-zA-Z0-9_-]/g, '-');
+  }
+
+  function getSavedField(mid, field, fallback) {
+    try {
+      const saved = localStorage.getItem(FIELD_KEY_PREFIX + mid + '.' + field);
+      if (saved != null && saved !== '') return saved;
+    } catch(e) {}
+    return fallback;
+  }
+
+  function getSavedActionField(acaoId, field, fallback) {
+    try {
+      const saved = localStorage.getItem(ACAO_KEY_PREFIX + acaoId + '.' + field);
+      if (saved != null && saved !== '') return saved;
+    } catch(e) {}
+    return fallback;
+  }
+
+  function calcularProgressoAcao(unidade, action) {
+    const melhorias = Array.isArray(action.melhorias) ? action.melhorias : [];
+    const total = melhorias.length;
+    let concluidas = 0;
+    melhorias.forEach(m => {
+      const mid = getMelhoriaId(unidade, action, m);
+      const status = getSavedField(mid, 'status', m.status);
+      if (status === 'Concluída') concluidas++;
+    });
+    const pct = total ? Math.round((concluidas / total) * 100) : 0;
+    return { total, concluidas, pct };
+  }
+
+  function atualizarProgressoAcao(unidade, action) {
+    const acaoId = (unidade + '-' + action.idac).replace(/[^a-zA-Z0-9_-]/g, '-');
+    const p = calcularProgressoAcao(unidade, action);
+    document.querySelectorAll(`[data-progress-acaoid="${acaoId}"]`).forEach(el => {
+      el.textContent = `${p.pct}%`;
+      el.title = `${p.concluidas} de ${p.total} melhorias concluídas`;
+    });
+    document.querySelectorAll(`[data-progress-detail-acaoid="${acaoId}"]`).forEach(el => {
+      el.textContent = `${p.concluidas}/${p.total} (${p.pct}%)`;
+    });
+  }
+
+  function atualizarTodosProgressos() {
+    Object.entries(UNITS_DATA).forEach(([unidade, actions]) => {
+      actions.forEach(action => atualizarProgressoAcao(unidade, action));
+    });
+  }
+
+
+  function contarLinhasMelhoriasNoCard(domId) {
+    const card = document.getElementById(domId);
+    if (!card) return null;
+    return card.querySelectorAll('tbody > tr:not(.obs-row)').length;
+  }
+
+  function quantidadeMelhorias(action, domId) {
+    const linhas = contarLinhasMelhoriasNoCard(domId);
+    if (linhas !== null) return linhas;
+    return contarMelhorias(action);
+  }
+
+  function atualizarContadoresAcao(domId) {
+    const total = contarLinhasMelhoriasNoCard(domId);
+    if (total === null) return;
+
+    document.querySelectorAll(`.action-count[data-domid="${domId}"]`).forEach(el => {
+      el.textContent = el.classList.contains('pill') ? `${total} melhorias` : total;
+    });
+
+    document.querySelectorAll(`.action-count-title[data-domid="${domId}"]`).forEach(el => {
+      el.textContent = `Melhorias vinculadas (${total})`;
+    });
+  }
+
+  function atualizarTodosContadoresDOM(scope = document) {
+    scope.querySelectorAll('.action-card[id]').forEach(card => atualizarContadoresAcao(card.id));
+  }
+
+  function calcularTotalAcoes() {
+    return Object.values(UNITS_DATA).reduce((total, actions) => total + actions.length, 0);
+  }
+
+  function calcularTotalMelhorias() {
+    return Object.values(UNITS_DATA).reduce((total, actions) => {
+      return total + actions.reduce((sub, action) => sub + contarMelhorias(action), 0);
+    }, 0);
+  }
+
+  function atualizarResumoGeral() {
+    const acoesEl = document.getElementById('summary-acoes-total');
+    const melhoriasEl = document.getElementById('summary-melhorias-total');
+    if (acoesEl) acoesEl.textContent = calcularTotalAcoes();
+    if (melhoriasEl) melhoriasEl.textContent = calcularTotalMelhorias();
+  }
+
+  function calcularStatsUnidade(unidade) {
+    const actions = UNITS_DATA[unidade] || [];
+    const totalAcoes = actions.length;
+    let totalMelh = 0, conc = 0;
+    actions.forEach(action => {
+      (action.melhorias || []).forEach(m => {
+        totalMelh++;
+        const melhoriaId = getMelhoriaId(unidade, action, m);
+        let status = m.status;
+        try {
+          const saved = localStorage.getItem(FIELD_KEY_PREFIX + melhoriaId + '.status');
+          if (saved) status = saved;
+        } catch(e) {}
+        if (status === 'Concluída') conc++;
+      });
+    });
+    const pct = totalMelh ? Math.round((conc / totalMelh) * 100) : 0;
+    return { totalAcoes, totalMelh, conc, pct };
+  }
+
+  function renderUnidadeStats(unidade) {
+    const s = calcularStatsUnidade(unidade);
+    return `<strong>${s.totalAcoes}</strong> ações · <strong>${s.totalMelh}</strong> melhorias · <strong class="pct-conc">${s.conc}</strong> concluídas (<strong class="pct-conc">${s.pct}%</strong>)`;
+  }
+
+  function atualizarStatsUnidade(unidade) {
+    const info = unitMap[unidade];
+    if (!info) return;
+    const el = document.getElementById('unit-stats-' + info.key);
+    if (el) el.innerHTML = renderUnidadeStats(unidade);
+  }
+
+  function atualizarTodasStats() {
+    Object.keys(unitMap).forEach(u => atualizarStatsUnidade(u));
   }
 
   function renderUnitButtons() {
     const container = document.getElementById('unit-buttons');
     let html = '';
     for (const [unidade, info] of Object.entries(unitMap)) {
-      const actions = UNITS_DATA[unidade] || [];
-      const totalMelhorias = actions.reduce((acc, a) => acc + a.qtd_melhorias, 0);
       html += `
         <div class="unit-box">
           <button class="unit-btn" id="btn-${info.key}" type="button" onclick="showUnit('${info.key}', '${unidade}')">${unidade}</button>
-          <div class="unit-stats"><strong>${actions.length}</strong> ações · <strong>${totalMelhorias}</strong> melhorias</div>
+          <div class="unit-stats" id="unit-stats-${info.key}">${renderUnidadeStats(unidade)}</div>
         </div>
       `;
     }
@@ -6303,23 +6944,84 @@
   function renderUnit(key, unidade) {
     const actions = UNITS_DATA[unidade] || [];
     document.getElementById(key + '-title').textContent = unidade;
-    document.getElementById(key + '-info').textContent = `${actions.length} ações · ${actions.reduce((a, x) => a + x.qtd_melhorias, 0)} melhorias associadas. Clique em uma ação para ver os detalhes e melhorias vinculadas.`;
+    document.getElementById(key + '-info').textContent = `${actions.length} ações · ${actions.reduce((a, x) => a + contarMelhorias(x), 0)} melhorias associadas. Clique em uma ação para ver os detalhes e melhorias vinculadas.`;
     const container = document.getElementById(key + '-actions');
     let html = '';
     actions.forEach(action => {
       const domId = `${key}-${action.id}`;
+      const acaoId = (unidade + '-' + action.idac).replace(/[^a-zA-Z0-9_-]/g, '-');
+      const actionStatusSlug = statusClass(action.status);
+      const actionStatusOpts = buildActionStatusOptions(action.status);
+      const actionInicioISO = dateISOFromBR(action.inicio);
+      const actionPrevisaoISO = dateISOFromBR(action.previsao);
+      const actionPrazoNum = parseInt(action.prazo, 10);
+      const actionPrazoOpts = buildPrazoOptions(actionPrazoNum);
+      const actionMesesOpts = buildMesesOptions();
       const melhoriasHtml = action.melhorias.map(m => {
         const melhoriaId = `${unidade}-${action.idac}-${m.idm}`.replace(/[^a-zA-Z0-9_-]/g, '-');
+        const inicioISO = dateISOFromBR(m.inicio);
+        const previsaoISO = dateISOFromBR(m.previsao);
+        const prazoOpts = buildPrazoOptions(m.prazo);
+        const mesesOpts = buildMesesOptions();
+        const statusOpts = buildStatusOptions(m.status);
+        const obsStatusOpts = buildObsStatusOptions();
+        const statusSlug = statusClass(m.status);
         return `
         <tr onclick="alternarLinhaSelecionada(event, '${melhoriaId}')">
           <td class="col-select"><input type="checkbox" id="${melhoriaId}" class="check-melhoria" data-unidade="${unidade}" data-acao="${action.idac}" data-melhoria="${m.idm}" data-descricao="${m.desc.replace(/"/g, '&quot;')}" onchange="marcarLinhaSelecionada(this)"></td>
           <td class="col-id">${m.idm}</td>
           <td>${m.desc}</td>
-          <td class="col-date" data-label="Início">${m.inicio}</td>
-          <td class="col-prazo">${m.prazo}d</td>
-          <td class="col-date" data-label="Previsão">${m.previsao}</td>
-          <td><span class="status-tag ${statusClass(m.status)}">${m.status}</span></td>
+          <td class="col-date" data-label="Início" onclick="event.stopPropagation()">
+            <input type="date" class="cell-date" data-mid="${melhoriaId}" data-field="inicio" value="${inicioISO}" onchange="aoMudarCampo('${melhoriaId}','inicio',this)">
+          </td>
+          <td class="col-prazo" onclick="event.stopPropagation()">
+            <select class="cell-prazo-select" data-mid="${melhoriaId}" data-field="prazo" onchange="aoMudarCampo('${melhoriaId}','prazo',this)">${prazoOpts}</select>
+          </td>
+          <td class="col-meses" onclick="event.stopPropagation()">
+            <select class="cell-meses-select" data-mid="${melhoriaId}" data-field="meses" onchange="aoMudarCampo('${melhoriaId}','meses',this)">${mesesOpts}</select>
+          </td>
+          <td class="col-date" data-label="Previsão" onclick="event.stopPropagation()">
+            <input type="date" class="cell-date" data-mid="${melhoriaId}" data-field="previsao" value="${previsaoISO}" onchange="aoMudarCampo('${melhoriaId}','previsao',this)">
+          </td>
+          <td onclick="event.stopPropagation()">
+            <select class="status-select action-status-select status-${statusSlug}" data-mid="${melhoriaId}" data-field="status" onchange="aoMudarCampo('${melhoriaId}','status',this)">${statusOpts}</select>
+          </td>
+          <td class="col-obs" onclick="event.stopPropagation()">
+            <button type="button" class="obs-toggle" data-mid="${melhoriaId}" data-idx="1" onclick="toggleObs('${melhoriaId}', 1, this)">+</button>
+            <button type="button" class="obs-toggle" data-mid="${melhoriaId}" data-idx="2" onclick="toggleObs('${melhoriaId}', 2, this)">+</button>
+            <button type="button" class="obs-toggle" data-mid="${melhoriaId}" data-idx="3" onclick="toggleObs('${melhoriaId}', 3, this)">+</button>
+          </td>
         </tr>
+        <tr id="obs-row-${melhoriaId}-1" class="obs-row hidden"><td colspan="9">
+          <div class="obs-wrapper">
+            <div class="obs-header">
+              <label class="obs-field-label" for="obs-ta-${melhoriaId}-1">Observação 1</label>
+              <select class="obs-status-select" data-mid="${melhoriaId}" data-field="obs-status-1" onchange="aoMudarCampo('${melhoriaId}','obs-status-1',this)">${obsStatusOpts}</select>
+            </div>
+            <textarea id="obs-ta-${melhoriaId}-1" class="obs-textarea" data-mid="${melhoriaId}" data-idx="1" placeholder="Escreva livremente suas observações sobre esta melhoria..." oninput="salvarObs('${melhoriaId}', 1, this)"></textarea>
+            <span class="obs-saved-flag" id="obs-flag-${melhoriaId}-1">✓ salvo</span>
+          </div>
+        </td></tr>
+        <tr id="obs-row-${melhoriaId}-2" class="obs-row hidden"><td colspan="9">
+          <div class="obs-wrapper">
+            <div class="obs-header">
+              <label class="obs-field-label" for="obs-ta-${melhoriaId}-2">Observação 2</label>
+              <select class="obs-status-select" data-mid="${melhoriaId}" data-field="obs-status-2" onchange="aoMudarCampo('${melhoriaId}','obs-status-2',this)">${obsStatusOpts}</select>
+            </div>
+            <textarea id="obs-ta-${melhoriaId}-2" class="obs-textarea" data-mid="${melhoriaId}" data-idx="2" placeholder="Escreva livremente suas observações sobre esta melhoria..." oninput="salvarObs('${melhoriaId}', 2, this)"></textarea>
+            <span class="obs-saved-flag" id="obs-flag-${melhoriaId}-2">✓ salvo</span>
+          </div>
+        </td></tr>
+        <tr id="obs-row-${melhoriaId}-3" class="obs-row hidden"><td colspan="9">
+          <div class="obs-wrapper">
+            <div class="obs-header">
+              <label class="obs-field-label" for="obs-ta-${melhoriaId}-3">Observação 3</label>
+              <select class="obs-status-select" data-mid="${melhoriaId}" data-field="obs-status-3" onchange="aoMudarCampo('${melhoriaId}','obs-status-3',this)">${obsStatusOpts}</select>
+            </div>
+            <textarea id="obs-ta-${melhoriaId}-3" class="obs-textarea" data-mid="${melhoriaId}" data-idx="3" placeholder="Escreva livremente suas observações sobre esta melhoria..." oninput="salvarObs('${melhoriaId}', 3, this)"></textarea>
+            <span class="obs-saved-flag" id="obs-flag-${melhoriaId}-3">✓ salvo</span>
+          </div>
+        </td></tr>
       `;
       }).join('');
 
@@ -6327,22 +7029,41 @@
         <button class="action-btn" onclick="toggle('${domId}')">
           <span class="action-btn-title">${action.nome}</span>
           <span class="action-meta-side">
-            <small>${action.inicio} → ${action.previsao}</small>
-            <span class="pill">${action.qtd_melhorias} melhorias</span>
+            <small class="action-btn-dates">
+              <span class="acao-inicio-disp" data-acaoid="${acaoId}">${action.inicio}</span>
+              →
+              <span class="acao-previsao-disp" data-acaoid="${acaoId}">${action.previsao}</span>
+            </small>
+            <span class="pill action-progress" data-progress-acaoid="${acaoId}" title="0 de 0 melhorias concluídas">${calcularProgressoAcao(unidade, action).pct}%</span>
+            <span class="pill action-count" data-domid="${domId}">${contarMelhorias(action)} melhorias</span>
           </span>
         </button>
         <div id="${domId}" class="action-card hidden">
           <div class="action-header">
             <h3 class="action-title">${action.nome}</h3>
-            <span class="badge">${action.status}</span>
+            <select class="status-select action-status-select status-${actionStatusSlug}" data-acaoid="${acaoId}" data-field="status" onchange="aoMudarCampoAcao('${acaoId}','status',this)">${actionStatusOpts}</select>
           </div>
           <div class="meta">
-            <div class="meta-item"><span class="lbl">Início</span><span class="val">${action.inicio}</span></div>
-            <div class="meta-item"><span class="lbl">Previsão</span><span class="val">${action.previsao}</span></div>
-            <div class="meta-item"><span class="lbl">Prazo total</span><span class="val">${action.prazo}</span></div>
-            <div class="meta-item"><span class="lbl">Melhorias</span><span class="val">${action.qtd_melhorias}</span></div>
+            <div class="meta-item">
+              <span class="lbl">Início</span>
+              <input type="date" class="cell-date meta-date" data-acaoid="${acaoId}" data-field="inicio" value="${actionInicioISO}" onchange="aoMudarCampoAcao('${acaoId}','inicio',this)">
+            </div>
+            <div class="meta-item">
+              <span class="lbl">Previsão</span>
+              <input type="date" class="cell-date meta-date" data-acaoid="${acaoId}" data-field="previsao" value="${actionPrevisaoISO}" onchange="aoMudarCampoAcao('${acaoId}','previsao',this)">
+            </div>
+            <div class="meta-item">
+              <span class="lbl">Prazo total (dias)</span>
+              <select class="cell-prazo-select meta-prazo" data-acaoid="${acaoId}" data-field="prazo-dias" onchange="aoMudarCampoAcao('${acaoId}','prazo-dias',this)">${actionPrazoOpts}</select>
+            </div>
+            <div class="meta-item">
+              <span class="lbl">Meses</span>
+              <select class="cell-meses-select meta-meses" data-acaoid="${acaoId}" data-field="meses" onchange="aoMudarCampoAcao('${acaoId}','meses',this)">${actionMesesOpts}</select>
+            </div>
+            <div class="meta-item"><span class="lbl">Melhorias</span><span class="val action-count" data-domid="${domId}">${contarMelhorias(action)}</span></div>
+            <div class="meta-item"><span class="lbl">Progresso</span><span class="val" data-progress-detail-acaoid="${acaoId}">${calcularProgressoAcao(unidade, action).concluidas}/${calcularProgressoAcao(unidade, action).total} (${calcularProgressoAcao(unidade, action).pct}%)</span></div>
           </div>
-          <div class="melhorias-title">Melhorias vinculadas (${action.qtd_melhorias})</div>
+          <div class="melhorias-title action-count-title" data-domid="${domId}">Melhorias vinculadas (${contarMelhorias(action)})</div>
           <div style="overflow-x:auto;">
             <table class="melhorias-table">
               <thead>
@@ -6351,9 +7072,11 @@
                   <th>ID</th>
                   <th>Descrição</th>
                   <th>Início</th>
-                  <th>Prazo</th>
+                  <th>Prazo (dias)</th>
+                  <th>Meses</th>
                   <th>Previsão</th>
                   <th>Status</th>
+                  <th>Observações</th>
                 </tr>
               </thead>
               <tbody>${melhoriasHtml}</tbody>
@@ -6363,6 +7086,11 @@
       `;
     });
     container.innerHTML = html;
+    hidratarObs(container);
+    hidratarCampos(container);
+    hidratarCamposAcao(container);
+    atualizarTodosContadoresDOM(container);
+    atualizarTodosProgressos();
   }
 
   function showUnit(key, unidade) {
@@ -6395,9 +7123,378 @@
     marcarLinhaSelecionada(checkbox);
   }
 
+
+  // ===== Campos editáveis (data, prazo, meses, status) =====
+  const FIELD_KEY_PREFIX = 'reset.field.v1.';
+  const ACAO_KEY_PREFIX = 'reset.acao.v1.';
+  const STATUS_OPCOES = ['Não iniciada','Em andamento','Concluída','Com pendência','Não concluída'];
+  const ACTION_STATUS_OPCOES = ['Não iniciada','Em andamento','Concluída','Com pendência','Não concluída'];
+  const OBS_STATUS_OPCOES = ['Não iniciado','Executado','Não executado','Em andamento'];
+
+  function dateISOFromBR(s) {
+    if (!s) return '';
+    const m = String(s).match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    return m ? (m[3] + '-' + m[2] + '-' + m[1]) : '';
+  }
+
+  function dateBRfromISO(s) {
+    if (!s) return '';
+    const m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return m ? (m[3] + '/' + m[2] + '/' + m[1]) : s;
+  }
+
+  function atualizarExibicaoDataAcao(acaoId, field, isoValue) {
+    const cls = field === 'inicio' ? 'acao-inicio-disp'
+              : field === 'previsao' ? 'acao-previsao-disp'
+              : null;
+    if (!cls) return;
+    const els = document.querySelectorAll('.' + cls + '[data-acaoid="' + acaoId + '"]');
+    const display = isoValue ? dateBRfromISO(isoValue) : '—';
+    els.forEach(el => { el.textContent = display; });
+  }
+
+  function buildPrazoOptions(current) {
+    let opts = '<option value="">—</option>';
+    for (let i = 1; i <= 30; i++) {
+      const sel = (parseInt(current, 10) === i) ? ' selected' : '';
+      opts += `<option value="${i}"${sel}>${i}d</option>`;
+    }
+    return opts;
+  }
+  function buildMesesOptions() {
+    let opts = '<option value="">—</option>';
+    for (let i = 1; i <= 12; i++) {
+      opts += `<option value="${i}">${i}m</option>`;
+    }
+    return opts;
+  }
+  function buildStatusOptions(current) {
+    return STATUS_OPCOES.map(s => {
+      const sel = (s === current) ? ' selected' : '';
+      return `<option value="${s}"${sel}>${s}</option>`;
+    }).join('');
+  }
+  function buildActionStatusOptions(current) {
+    return ACTION_STATUS_OPCOES.map(s => {
+      const sel = (s === current) ? ' selected' : '';
+      return `<option value="${s}"${sel}>${s}</option>`;
+    }).join('');
+  }
+  function buildObsStatusOptions() {
+    return OBS_STATUS_OPCOES.map((s, i) => {
+      const sel = (i === 0) ? ' selected' : '';
+      return `<option value="${s}"${sel}>${s}</option>`;
+    }).join('');
+  }
+
+  function aoMudarCampo(mid, field, el) {
+    try { localStorage.setItem(FIELD_KEY_PREFIX + mid + '.' + field, el.value); } catch(e) {}
+    if (field === 'status' || field.indexOf('obs-status-') === 0) {
+      aplicarCorStatus(el);
+    }
+    if (field === 'status' && typeof atualizarTodasStats === 'function') {
+      atualizarTodasStats();
+      atualizarTodosProgressos();
+      renderCalendar();
+    }
+    if (field === 'inicio') renderCalendar();
+  }
+
+  function aoMudarCampoAcao(acaoId, field, el) {
+    try { localStorage.setItem(ACAO_KEY_PREFIX + acaoId + '.' + field, el.value); } catch(e) {}
+    if (field === 'status') {
+      aplicarCorStatus(el);
+    }
+    if (field === 'inicio' || field === 'previsao') {
+      atualizarExibicaoDataAcao(acaoId, field, el.value);
+      renderCalendar();
+    }
+  }
+
+  function hidratarCamposAcao(scope) {
+    const root = scope || document;
+    root.querySelectorAll('[data-acaoid]').forEach(el => {
+      const aid = el.getAttribute('data-acaoid');
+      const field = el.getAttribute('data-field');
+      if (!aid || !field) return;
+      try {
+        const saved = localStorage.getItem(ACAO_KEY_PREFIX + aid + '.' + field);
+        if (saved != null && saved !== '') el.value = saved;
+      } catch(e) {}
+      if (el.classList.contains('status-select') || el.classList.contains('action-status-select')) {
+        aplicarCorStatus(el);
+      }
+      if (el.classList.contains('cell-date') && (field === 'inicio' || field === 'previsao')) {
+        atualizarExibicaoDataAcao(aid, field, el.value);
+      }
+    });
+  }
+
+  function aplicarCorStatus(el) {
+    if (!el) return;
+    el.classList.forEach(c => {});
+    // remove existing status-* classes
+    [...el.classList].forEach(c => { if (c.indexOf('status-') === 0) el.classList.remove(c); });
+    const slug = statusClass(el.value || '');
+    if (slug) el.classList.add('status-' + slug);
+  }
+
+  function hidratarCampos(scope) {
+    const root = scope || document;
+    // Selects (status, prazo, meses, obs-status)
+    root.querySelectorAll('select.cell-prazo-select, select.cell-meses-select, select.status-select, select.obs-status-select').forEach(s => {
+      const mid = s.getAttribute('data-mid');
+      const field = s.getAttribute('data-field');
+      if (mid && field) {
+        try {
+          const saved = localStorage.getItem(FIELD_KEY_PREFIX + mid + '.' + field);
+          if (saved != null && saved !== '') s.value = saved;
+        } catch(e) {}
+      }
+      if (s.classList.contains('status-select') || s.classList.contains('obs-status-select')) {
+        aplicarCorStatus(s);
+      }
+    });
+    // Date inputs
+    root.querySelectorAll('input.cell-date').forEach(el => {
+      const mid = el.getAttribute('data-mid');
+      const field = el.getAttribute('data-field');
+      if (mid && field) {
+        try {
+          const saved = localStorage.getItem(FIELD_KEY_PREFIX + mid + '.' + field);
+          if (saved != null && saved !== '') el.value = saved;
+        } catch(e) {}
+      }
+    });
+  }
+
+  // ===== Observações livres (+) por melhoria =====
+  const OBS_KEY_PREFIX = 'reset.obs.v1.';
+
+  function toggleObs(melhoriaId, idx, btn) {
+    const row = document.getElementById(`obs-row-${melhoriaId}-${idx}`);
+    if (!row) return;
+    const aberto = row.classList.toggle('hidden');
+    // aberto = true significa que ficou hidden; queremos invertido
+    const visivel = !aberto;
+    if (btn) {
+      btn.classList.toggle('aberto', visivel);
+      btn.textContent = visivel ? '−' : '+';
+    }
+    if (visivel) {
+      const ta = document.getElementById(`obs-ta-${melhoriaId}-${idx}`);
+      if (ta) setTimeout(() => ta.focus(), 50);
+    }
+  }
+
+  let obsSaveTimers = {};
+  function salvarObs(melhoriaId, idx, ta) {
+    const key = OBS_KEY_PREFIX + melhoriaId + '.' + idx;
+    try { localStorage.setItem(key, ta.value); } catch (e) { /* ignore */ }
+    const flag = document.getElementById(`obs-flag-${melhoriaId}-${idx}`);
+    if (!flag) return;
+    flag.classList.add('show');
+    const tk = key;
+    clearTimeout(obsSaveTimers[tk]);
+    obsSaveTimers[tk] = setTimeout(() => flag.classList.remove('show'), 1200);
+  }
+
+  function hidratarObs(scope) {
+    const root = scope || document;
+    const tas = root.querySelectorAll('textarea.obs-textarea');
+    tas.forEach(ta => {
+      const mid = ta.getAttribute('data-mid');
+      const idx = ta.getAttribute('data-idx');
+      const key = OBS_KEY_PREFIX + mid + '.' + idx;
+      try {
+        const v = localStorage.getItem(key);
+        if (v != null) {
+          ta.value = v;
+          // Marca o botão correspondente como preenchido (mas ainda fechado)
+          const btn = root.querySelector(`button.obs-toggle[data-mid="${mid}"][data-idx="${idx}"]`);
+          if (btn && v.trim().length > 0) {
+            btn.style.borderColor = 'var(--brand)';
+            btn.title = 'Observação preenchida';
+          }
+        }
+      } catch (e) { /* ignore */ }
+    });
+  }
+
+
+  // ===== Abas =====
+  function showTab(tab) {
+    document.getElementById('section-unidades').classList.toggle('hidden', tab !== 'unidades');
+    document.getElementById('section-calendario').classList.toggle('hidden', tab !== 'calendario');
+    document.getElementById('tab-unidades').classList.toggle('active', tab === 'unidades');
+    document.getElementById('tab-calendario').classList.toggle('active', tab === 'calendario');
+    if (tab === 'calendario') renderCalendar();
+  }
+
+  // ===== Importação / exportação JSON =====
+  function coletarLocalStorageReset() {
+    const data = {};
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.indexOf('reset.') === 0) data[k] = localStorage.getItem(k);
+      }
+    } catch(e) {}
+    return data;
+  }
+
+  function exportarJSON() {
+    const payload = {
+      versao: 'reset-json-v2',
+      exportado_em: new Date().toISOString(),
+      unidades: UNITS_DATA,
+      localStorage: coletarLocalStorageReset()
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sistema-reset-export.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function importarJSON(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function() {
+      try {
+        const data = JSON.parse(reader.result);
+        if (data.unidades && typeof data.unidades === 'object') {
+          Object.keys(UNITS_DATA).forEach(k => delete UNITS_DATA[k]);
+          Object.assign(UNITS_DATA, data.unidades);
+        }
+        if (data.localStorage && typeof data.localStorage === 'object') {
+          Object.entries(data.localStorage).forEach(([k, v]) => {
+            if (k.indexOf('reset.') === 0) localStorage.setItem(k, v);
+          });
+        }
+        atualizarResumoGeral();
+        renderUnitButtons();
+        renderCalendarMonthOptions();
+        showUnit('abc', 'Grande ABC');
+        renderCalendar();
+        alert('JSON importado com sucesso.');
+      } catch (e) {
+        alert('Não foi possível importar o JSON. Verifique se o arquivo é válido.');
+      } finally {
+        event.target.value = '';
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // ===== Calendário de melhorias por início e unidade =====
+  function getCalendarItems() {
+    const items = [];
+    Object.entries(UNITS_DATA).forEach(([unidade, actions]) => {
+      actions.forEach(action => {
+        (action.melhorias || []).forEach(m => {
+          const mid = getMelhoriaId(unidade, action, m);
+          const inicioISO = getSavedField(mid, 'inicio', dateISOFromBR(m.inicio));
+          if (!inicioISO) return;
+          items.push({
+            date: inicioISO,
+            unidade,
+            acao: action.idac,
+            melhoria: m.idm,
+            desc: m.desc,
+            status: getSavedField(mid, 'status', m.status)
+          });
+        });
+      });
+    });
+    return items.sort((a,b) => a.date.localeCompare(b.date) || a.unidade.localeCompare(b.unidade));
+  }
+
+  function renderCalendarMonthOptions() {
+    const sel = document.getElementById('calendar-month');
+    if (!sel) return;
+    const old = sel.value;
+    const items = getCalendarItems();
+    const months = [...new Set(items.map(i => i.date.slice(0,7)))];
+    sel.innerHTML = months.map(m => {
+      const [y, mo] = m.split('-');
+      return `<option value="${m}">${mo}/${y}</option>`;
+    }).join('');
+    if (months.includes(old)) sel.value = old;
+    else if (months.length) sel.value = months[0];
+  }
+
+  function escapeHtml(value) {
+    return String(value || '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  }
+
+  function renderCalendar() {
+    const grid = document.getElementById('calendar-grid');
+    const sel = document.getElementById('calendar-month');
+    const count = document.getElementById('calendar-count');
+    if (!grid || !sel) return;
+    if (!sel.options.length) renderCalendarMonthOptions();
+    const month = sel.value;
+    if (!month) {
+      grid.innerHTML = '<div class="calendar-empty">Nenhuma melhoria encontrada.</div>';
+      if (count) count.textContent = '';
+      return;
+    }
+
+    const items = getCalendarItems().filter(item => item.date.slice(0,7) === month);
+    const byDate = {};
+    items.forEach(item => {
+      if (!byDate[item.date]) byDate[item.date] = [];
+      byDate[item.date].push(item);
+    });
+
+    const dates = Object.keys(byDate).sort();
+    if (!dates.length) {
+      grid.innerHTML = '<div class="calendar-empty">Nenhuma melhoria encontrada para o mês selecionado.</div>';
+      if (count) count.innerHTML = '<strong>0</strong> melhorias no mês selecionado';
+      return;
+    }
+
+    const html = dates.map(date => {
+      const [y, m, d] = date.split('-');
+      const dayItems = byDate[date].sort((a,b) =>
+        a.unidade.localeCompare(b.unidade) ||
+        a.acao.localeCompare(b.acao) ||
+        a.melhoria.localeCompare(b.melhoria)
+      );
+      const cards = dayItems.map(item => {
+        const statusSlug = statusClass(item.status);
+        return `<div class="kanban-card status-${statusSlug}">
+          <strong>${escapeHtml(item.unidade)} · ${escapeHtml(item.acao)} · ${escapeHtml(item.melhoria)}</strong>
+          <span class="kanban-status">Status: ${escapeHtml(item.status)}</span>
+        </div>`;
+      }).join('');
+      return `<div class="kanban-day">
+        <div class="kanban-day-header">
+          <div class="kanban-day-title">${d}/${m}/${y}</div>
+          <div class="kanban-day-count">${dayItems.length} melhoria${dayItems.length === 1 ? '' : 's'}</div>
+        </div>
+        ${cards}
+      </div>`;
+    }).join('');
+
+    grid.innerHTML = html;
+    if (count) count.innerHTML = `<strong>${items.length}</strong> melhorias no mês selecionado`;
+  }
+
+
   // INIT
+  atualizarResumoGeral();
   renderUnitButtons();
+  renderCalendarMonthOptions();
   showUnit('abc', 'Grande ABC');
+  atualizarTodosProgressos();
+  renderCalendar();
 </script>
 </body>
 </html>
