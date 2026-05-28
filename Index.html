@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostico RH e Operacoes - Bolix / Projeto RESET</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060d1a;--surface:#0b1628;--surface2:#111f35;--surface3:#162840;
+  --border:#1e3050;--border2:#2a4268;--text:#cdd9ee;--muted:#5a7499;
+  --brand:#a8cc3a;--brand-bg:rgba(168,204,58,.08);
+  --danger:#e05555;--success:#3ac87a;
+  --opt-a:#5a7499;--opt-b:#3a9de0;--opt-c:#e09a30;--opt-d:#3ac87a;
+  --opt-a-bg:rgba(90,116,153,.12);--opt-b-bg:rgba(58,157,224,.12);
+  --opt-c-bg:rgba(224,154,48,.12);--opt-d-bg:rgba(58,200,122,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;padding:0 24px;height:56px}
+.logo-mark{width:32px;height:32px;background:var(--brand);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#0a1a00;font-family:'IBM Plex Mono',monospace}
+.logo-brand{font-weight:700;font-size:15px;color:var(--text);letter-spacing:.02em}
+.topbar-sep{width:1px;height:24px;background:var(--border2)}
+.topbar-badge{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--brand);background:var(--brand-bg);border:1px solid rgba(168,204,58,.25);border-radius:4px;padding:2px 8px;text-transform:uppercase}
+.topbar-title{font-size:13px;color:var(--muted)}
+.topbar-spacer{flex:1}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border2);border-radius:7px;background:var(--surface2);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn:hover{background:var(--surface3)}
+.btn-brand{background:var(--brand-bg);border-color:rgba(168,204,58,.3);color:var(--brand)}
+.btn-brand:hover{background:rgba(168,204,58,.15);border-color:var(--brand)}
+.btn-danger{background:rgba(224,85,85,.08);border-color:rgba(224,85,85,.25);color:var(--danger)}
+.btn-danger:hover{background:rgba(224,85,85,.15);border-color:var(--danger)}
+.btn-accent{background:rgba(80,50,148,.15);border-color:rgba(80,50,148,.35);color:#a98ef0}
+.btn-accent:hover{background:rgba(80,50,148,.25);border-color:#a98ef0}
+.container{max-width:900px;margin:0 auto;padding:32px 20px 64px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;margin-bottom:4px}
+.page-header p{color:var(--muted);font-size:13px}
+.progress-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;gap:20px}
+.progress-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.progress-track{flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--brand);border-radius:3px;transition:width .4s ease;width:0%}
+.progress-pct{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:var(--brand);min-width:40px;text-align:right}
+.section-label{display:flex;align-items:center;gap:10px;margin:28px 0 16px}
+.section-label-text{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.section-label-line{flex:1;height:1px;background:var(--border)}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;transition:border-color .2s}
+.q-card.answered{border-color:var(--border2)}
+.q-card.answered.grade-d{border-color:rgba(58,200,122,.3)}
+.q-header{display:flex;align-items:flex-start;gap:14px;padding:18px 20px 16px}
+.q-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-bg);border:1px solid rgba(168,204,58,.2);border-radius:5px;padding:3px 8px;white-space:nowrap;margin-top:1px;letter-spacing:.05em}
+.q-text{flex:1;font-size:14px;font-weight:600;line-height:1.5}
+.q-status{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:4px;padding:3px 8px;white-space:nowrap;margin-top:2px}
+.q-status.pend{color:var(--muted);background:rgba(90,116,153,.1);border:1px solid rgba(90,116,153,.15)}
+.q-status.sa{color:var(--opt-a);background:var(--opt-a-bg);border:1px solid rgba(90,116,153,.3)}
+.q-status.sb{color:var(--opt-b);background:var(--opt-b-bg);border:1px solid rgba(58,157,224,.3)}
+.q-status.sc{color:var(--opt-c);background:var(--opt-c-bg);border:1px solid rgba(224,154,48,.3)}
+.q-status.sd{color:var(--opt-d);background:var(--opt-d-bg);border:1px solid rgba(58,200,122,.3)}
+.options-wrap{padding:0 20px 20px;display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);cursor:pointer;transition:all .15s}
+.option:hover{border-color:var(--border2);background:var(--surface3)}
+.option.oa{border-color:rgba(90,116,153,.45);background:var(--opt-a-bg)}
+.option.ob{border-color:rgba(58,157,224,.45);background:var(--opt-b-bg)}
+.option.oc{border-color:rgba(224,154,48,.45);background:var(--opt-c-bg)}
+.option.od{border-color:rgba(58,200,122,.45);background:var(--opt-d-bg)}
+.opt-letter{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;border:1px solid;flex-shrink:0;margin-top:2px}
+.la{color:var(--opt-a);border-color:rgba(90,116,153,.35);background:rgba(90,116,153,.08)}
+.lb{color:var(--opt-b);border-color:rgba(58,157,224,.35);background:rgba(58,157,224,.08)}
+.lc{color:var(--opt-c);border-color:rgba(224,154,48,.35);background:rgba(224,154,48,.08)}
+.ld{color:var(--opt-d);border-color:rgba(58,200,122,.35);background:rgba(58,200,122,.08)}
+.option.oa .la{background:rgba(90,116,153,.25);border-color:var(--opt-a)}
+.option.ob .lb{background:rgba(58,157,224,.25);border-color:var(--opt-b)}
+.option.oc .lc{background:rgba(224,154,48,.25);border-color:var(--opt-c)}
+.option.od .ld{background:rgba(58,200,122,.25);border-color:var(--opt-d)}
+.opt-body{flex:1}
+.opt-text{font-size:13px;font-weight:500;line-height:1.45}
+/* Melhorias: ocultas por padrao, aparecem so na opcao selecionada */
+.opt-mels{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);flex-direction:column;gap:5px}
+.option.oa .opt-mels,.option.ob .opt-mels,.option.oc .opt-mels,.option.od .opt-mels{display:flex}
+.mel-row{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--muted);line-height:1.45}
+.mel-ac{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--brand);background:var(--brand-bg);border:1px solid rgba(168,204,58,.2);border-radius:3px;padding:1px 6px;white-space:nowrap;flex-shrink:0}
+.mel-items{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.mel-desc{flex:1}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:32px}
+.summary-card h2{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.s-dot{width:8px;height:8px;border-radius:50%;background:var(--brand);display:inline-block;flex-shrink:0}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:20px}
+.s-stat{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.s-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.s-value{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;color:var(--brand)}
+.sum-list{display:flex;flex-direction:column;gap:6px}
+.sum-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;font-size:12px}
+.sum-item.pend{opacity:.4}
+.sum-q{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);white-space:nowrap;min-width:28px}
+.sum-text{flex:1;line-height:1.4}
+.sum-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:4px;padding:2px 7px;white-space:nowrap}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:12px 18px;font-size:13px;color:var(--text);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-color:rgba(58,200,122,.35);color:var(--success)}
+.toast.err{border-color:rgba(224,85,85,.35);color:var(--danger)}
+@media print{
+  .topbar{display:none}
+  body{background:#fff;color:#000}
+  .q-card,.option,.summary-card{border-color:#ccc!important;background:#fff!important}
+  .opt-mels{display:flex!important}
+  .mel-ac{border:1px solid #999;color:#333;background:#eee}
+  .toast{display:none}
+}
+@media(max-width:600px){.topbar{padding:0 14px}.topbar-title{display:none}.container{padding:20px 12px 48px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="logo-mark">BX</div>
+    <span class="logo-brand">BOLIX</span>
+  </div>
+  <div class="topbar-sep"></div>
+  <span class="topbar-badge">PROJETO RESET</span>
+  <span class="topbar-title">Diagnostico RH &amp; Operacoes</span>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-actions">
+    <button class="btn btn-accent" onclick="importTrigger()">&#8595; Importar</button>
+    <button class="btn btn-brand" onclick="exportJSON()">&#8593; Exportar</button>
+    <button class="btn" onclick="window.print()">&#9113; Imprimir</button>
+    <button class="btn" style="background:rgba(168,204,58,.12);border-color:rgba(168,204,58,.35);color:var(--brand)" onclick="enviarEmail()">&#9993; Enviar Resultado</button>
+    <button class="btn btn-danger" onclick="clearAll()">&#10005; Limpar</button>
+  </div>
+</div>
+<input type="file" id="fileInput" accept=".json" style="display:none" onchange="importJSON(event)">
+<div class="container">
+  <div class="page-header">
+    <h1>Diagnostico RH &amp; Operacoes</h1>
+    <p>Selecione a alternativa que melhor descreve o estagio atual de cada tema. As melhorias correspondentes aparecem automaticamente apos a selecao.</p>
+  </div>
+  <div class="progress-wrap">
+    <span class="progress-label">Progresso</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-pct" id="progressPct">0 / 7</span>
+  </div>
+  <div class="section-label">
+    <span class="section-label-text">Questoes</span>
+    <div class="section-label-line"></div>
+  </div>
+  <div id="questionsWrap"></div>
+  <div class="summary-card">
+    <h2><span class="s-dot"></span> Resumo do Diagnostico</h2>
+    <div class="summary-grid">
+      <div class="s-stat"><div class="s-label">Respondidas</div><div class="s-value" id="statR">0 / 7</div></div>
+      <div class="s-stat"><div class="s-label">Melhorias Enderecadas</div><div class="s-value" id="statM">0</div></div>
+      <div class="s-stat"><div class="s-label">Acoes Envolvidas</div><div class="s-value" id="statA">0</div></div>
+      <div class="s-stat"><div class="s-label">Nivel Medio</div><div class="s-value" id="statN">-</div></div>
+    </div>
+    <div class="sum-list" id="sumList"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var QUESTIONS=[
+  {id:"P1",text:"Como a empresa realiza hoje a avaliacao de desempenho e a classificacao da equipe de operacoes?",
+   opts:{
+    A:{label:"Nao existe avaliacao formal - o desempenho e percebido informalmente pela lideranca.",mels:[]},
+    B:{label:"Existe uma avaliacao basica, mas sem criterios claros nem frequencia definida.",
+       mels:[{ac:"AC-04 Interlagos",items:"M01-M05",desc:"Avaliacao individual e metricas iniciais"}]},
+    C:{label:"A avaliacao existe com criterios parciais; ja utilizamos alguma escala de classificacao.",
+       mels:[{ac:"AC-04 Interlagos",items:"M01-M10",desc:"Avaliacao individual completa com classificacao"},
+             {ac:"AC-05 Interlagos",items:"M01-M05",desc:"Perfil e criterios iniciais de equipe"}]},
+    D:{label:"Temos avaliacao estruturada com criterios definidos, escala de classificacao e frequencia regular.",
+       mels:[{ac:"AC-04 Interlagos",items:"M01-M10",desc:"Avaliacao individual e classificacao completa"},
+             {ac:"AC-05 Interlagos",items:"M01-M05",desc:"Perfil e criterios de contratacao iniciais"},
+             {ac:"AC-05 Guarulhos", items:"M01-M10",desc:"Avaliacao e perfil de equipe Guarulhos"}]}
+   }},
+  {id:"P2",text:"Existe um perfil de colaborador ideal definido para os cargos operacionais, com criterios objetivos de contratacao?",
+   opts:{
+    A:{label:"Nao existe perfil formal - contratamos por indicacao ou disponibilidade.",mels:[]},
+    B:{label:"Existe uma descricao informal do cargo, mas sem criterios de selecao padronizados.",
+       mels:[{ac:"AC-06 Interlagos Frente 1",items:"M02-M03",desc:"Perfil basico do cargo operacional"}]},
+    C:{label:"Temos perfil de cargo com alguns criterios, mas faltam indicadores comportamentais ou tecnicos.",
+       mels:[{ac:"AC-06 Interlagos Frente 1",items:"M02-M05",desc:"Perfil e criterios de contratacao Interlagos"},
+             {ac:"AC-05 Guarulhos",           items:"M02-M05",desc:"Perfil do colaborador Guarulhos"}]},
+    D:{label:"O perfil do colaborador e documentado, com criterios tecnicos e comportamentais claros e usados ativamente.",
+       mels:[{ac:"AC-06 Interlagos Frente 1",items:"M02-M05",desc:"Perfil completo e criterios Interlagos"},
+             {ac:"AC-05 Guarulhos",           items:"M02-M05",desc:"Perfil do colaborador Guarulhos"},
+             {ac:"AC-05 Interlagos",          items:"M06-M08",desc:"Criterios avancados de selecao Interlagos"}]}
+   }},
+  {id:"P3",text:"Como esta estruturado o processo de recrutamento e selecao para a equipe operacional?",
+   opts:{
+    A:{label:"Nao ha processo estruturado - contratamos quando surge necessidade urgente.",mels:[]},
+    B:{label:"Ha um processo basico (anuncio + entrevista), mas sem etapas ou criterios padronizados.",
+       mels:[{ac:"AC-06 Interlagos Frente 2",items:"M06-M09",desc:"Etapas iniciais de triagem e entrevista"}]},
+    C:{label:"O processo tem etapas definidas, mas ainda faltam testes praticos ou avaliacoes comportamentais.",
+       mels:[{ac:"AC-06 Interlagos Frentes 2-4",items:"M01, M06-M13",desc:"Processo estruturado de recrutamento"},
+             {ac:"AC-05 Interlagos",             items:"M08-M09",    desc:"Fontes de captacao e banco de talentos"}]},
+    D:{label:"O recrutamento e totalmente estruturado, com multiplas etapas, avaliacoes praticas e banco de talentos ativo.",
+       mels:[{ac:"AC-06 Interlagos Frentes 2-5",items:"M01, M06-M16",desc:"Recrutamento completo com avaliacoes e banco de talentos"},
+             {ac:"AC-05 Interlagos",             items:"M08-M09",    desc:"Fontes de captacao e banco de talentos"}]}
+   }},
+  {id:"P4",text:"Como e feita a integracao e o onboarding de novos colaboradores operacionais?",
+   opts:{
+    A:{label:"Nao ha onboarding formal - o novo colaborador aprende no dia a dia com os colegas.",mels:[]},
+    B:{label:"Existe uma apresentacao inicial da empresa, mas sem treinamento estruturado ou acompanhamento.",
+       mels:[{ac:"AC-05 Guarulhos Frente 4",items:"M16-M18",desc:"Integracao basica Guarulhos"}]},
+    C:{label:"Temos um roteiro de integracao com treinamentos iniciais, mas falta acompanhamento nos primeiros meses.",
+       mels:[{ac:"AC-05 Guarulhos Frentes 4-5",items:"M16-M21",   desc:"Integracao e onboarding Guarulhos"},
+             {ac:"AC-05 Interlagos",            items:"M10, M13-M14",desc:"Integracao e acompanhamento Interlagos"}]},
+    D:{label:"O onboarding e completo, com roteiro, treinamentos, mentoria e acompanhamento estruturado nos 90 primeiros dias.",
+       mels:[{ac:"AC-05 Guarulhos Frentes 4-5",items:"M16-M21",      desc:"Integracao e onboarding completo Guarulhos"},
+             {ac:"AC-06 Guarulhos Frente 5",    items:"M17-M18",      desc:"Treinamento de integracao Guarulhos"},
+             {ac:"AC-05 Interlagos",            items:"M10, M13-M14", desc:"Integracao e acompanhamento Interlagos"}]}
+   }},
+  {id:"P5",text:"Como a empresa gerencia o comportamento, a conduta e a cultura da equipe operacional?",
+   opts:{
+    A:{label:"Nao ha codigo de conduta nem cultura definida - cada lideranca age por conta propria.",mels:[]},
+    B:{label:"Existem regras basicas de conduta, mas nao sao comunicadas ou aplicadas de forma consistente.",
+       mels:[{ac:"AC-04 Interlagos",items:"M04-M05",desc:"Regras basicas de conduta"}]},
+    C:{label:"Temos codigo de conduta documentado e reunioes periodicas de alinhamento de cultura.",
+       mels:[{ac:"AC-05 Guarulhos Frente 3",items:"M11-M13",desc:"Codigo de conduta e cultura Guarulhos"},
+             {ac:"AC-04 Interlagos",         items:"M04-M07",desc:"Gestao de conduta e clima Interlagos"}]},
+    D:{label:"A cultura e vivenciada ativamente, com rituais, feedback continuo e processos claros de gestao de conduta.",
+       mels:[{ac:"AC-05 Guarulhos Frente 3",items:"M11-M15",desc:"Cultura e conduta completa Guarulhos"},
+             {ac:"AC-04 Interlagos",         items:"M04-M07",desc:"Gestao de conduta e clima Interlagos"}]}
+   }},
+  {id:"P6",text:"Existem praticas estruturadas de retencao e acompanhamento continuo da equipe?",
+   opts:{
+    A:{label:"Nao ha praticas de retencao - a rotatividade e tratada apenas quando se torna um problema.",mels:[]},
+    B:{label:"Fazemos conversas informais com colaboradores em risco, mas sem processo ou indicadores.",
+       mels:[{ac:"AC-06 Retencao Interlagos",items:"M01-M04",desc:"Diagnostico de turnover e causas"}]},
+    C:{label:"Temos indicadores de retencao e algumas acoes estruturadas, mas sem programa formal.",
+       mels:[{ac:"AC-06 Retencao Interlagos",items:"M01-M08",desc:"Indicadores e acoes de retencao"}]},
+    D:{label:"Existe um programa formal de retencao com indicadores, plano de carreira, pesquisa de clima e acoes preventivas.",
+       mels:[{ac:"AC-06 Retencao Interlagos",items:"M01-M13",desc:"Programa completo de retencao Interlagos"}]}
+   }},
+  {id:"P7",text:"Como esta a padronizacao operacional e o treinamento tecnico da equipe nas unidades?",
+   opts:{
+    A:{label:"Nao ha padronizacao formal - cada colaborador executa os processos a sua maneira.",mels:[]},
+    B:{label:"Existem alguns procedimentos escritos, mas nao sao seguidos de forma consistente.",
+       mels:[{ac:"AC-07 Interlagos", items:"M01-M06",desc:"Procedimentos operacionais basicos"},
+             {ac:"AC-12 Interlagos", items:"M01-M05",desc:"Treinamento tecnico inicial Interlagos"}]},
+    C:{label:"Temos POPs e treinamentos para as principais funcoes, com aplicacao parcial nas unidades.",
+       mels:[{ac:"AC-07 Interlagos",     items:"M01-M12",desc:"Padronizacao operacional Interlagos"},
+             {ac:"AC-12 Interlagos",     items:"M01-M10",desc:"Treinamento tecnico Interlagos"},
+             {ac:"AC-12 Guarulhos",      items:"M01-M12",desc:"Treinamento tecnico Guarulhos"},
+             {ac:"AC-12 Patio Paulista", items:"M01-M06",desc:"Padronizacao Patio Paulista"}]},
+    D:{label:"A padronizacao e completa: POPs, treinamentos estruturados, avaliacoes de conformidade e multiplicadores internos.",
+       mels:[{ac:"AC-07 Interlagos",     items:"M01-M18",desc:"Padronizacao operacional completa Interlagos"},
+             {ac:"AC-12 Interlagos",     items:"M01-M19",desc:"Treinamento tecnico completo Interlagos"},
+             {ac:"AC-12 Guarulhos",      items:"M01-M23",desc:"Treinamento tecnico completo Guarulhos"},
+             {ac:"AC-12 Patio Paulista", items:"M01-M10",desc:"Padronizacao completa Patio Paulista"}]}
+   }}
+];
+
+var KEY="bolix_diag_v3";
+var answers={};
+var META={
+  A:{lbl:"A - Nao iniciado",sc:"sa",bg:"rgba(90,116,153,.12)",bc:"rgba(90,116,153,.3)",co:"var(--opt-a)",oc:"oa"},
+  B:{lbl:"B - Basico",      sc:"sb",bg:"rgba(58,157,224,.12)", bc:"rgba(58,157,224,.3)", co:"var(--opt-b)",oc:"ob"},
+  C:{lbl:"C - Em progresso",sc:"sc",bg:"rgba(224,154,48,.12)", bc:"rgba(224,154,48,.3)", co:"var(--opt-c)",oc:"oc"},
+  D:{lbl:"D - Completo",    sc:"sd",bg:"rgba(58,200,122,.12)", bc:"rgba(58,200,122,.3)", co:"var(--opt-d)",oc:"od"}
+};
+
+function countM(s){
+  if(!s)return 0;
+  var t=0;
+  s.split(/,\s*/).forEach(function(p){
+    var r=p.match(/M(\d+)[\-]M(\d+)/);
+    if(r)t+=parseInt(r[2])-parseInt(r[1])+1;
+    else if(/M\d+/.test(p))t+=1;
+  });
+  return t;
+}
+
+function buildUI(){
+  var wrap=document.getElementById("questionsWrap");
+  wrap.innerHTML="";
+  QUESTIONS.forEach(function(q,i){
+    var card=document.createElement("div");
+    card.className="q-card";
+    card.id="card-"+q.id;
+    var hdr='<div class="q-header">'+
+      '<span class="q-num">Q'+String(i+1).padStart(2,"0")+'</span>'+
+      '<span class="q-text">'+q.text+'</span>'+
+      '<span class="q-status pend" id="qs-'+q.id+'">PENDENTE</span>'+
+      '</div><div class="options-wrap" id="ow-'+q.id+'"></div>';
+    card.innerHTML=hdr;
+    wrap.appendChild(card);
+    var ow=document.getElementById("ow-"+q.id);
+    ["A","B","C","D"].forEach(function(l){
+      var opt=q.opts[l];
+      var melsHtml="";
+      if(opt.mels&&opt.mels.length>0){
+        melsHtml='<div class="opt-mels">';
+        opt.mels.forEach(function(m){
+          melsHtml+='<div class="mel-row"><span class="mel-ac">'+m.ac+'</span><span class="mel-items">'+m.items+'</span><span class="mel-desc">'+m.desc+'</span></div>';
+        });
+        melsHtml+='</div>';
+      }
+      var div=document.createElement("div");
+      div.className="option";
+      div.id="opt-"+q.id+"-"+l;
+      div.onclick=(function(qid,letter){return function(){pick(qid,letter);};})(q.id,l);
+      div.innerHTML='<span class="opt-letter l'+l.toLowerCase()+'">'+l+'</span><div class="opt-body"><div class="opt-text">'+opt.label+'</div>'+melsHtml+'</div>';
+      ow.appendChild(div);
+    });
+  });
+}
+
+function pick(qid,letter){
+  ["A","B","C","D"].forEach(function(l){
+    var e=document.getElementById("opt-"+qid+"-"+l);
+    if(e)e.className="option";
+  });
+  if(answers[qid]===letter){
+    delete answers[qid];
+    var c=document.getElementById("card-"+qid);
+    if(c)c.className="q-card";
+    var s=document.getElementById("qs-"+qid);
+    if(s){s.className="q-status pend";s.textContent="PENDENTE";}
+  }else{
+    answers[qid]=letter;
+    var e2=document.getElementById("opt-"+qid+"-"+letter);
+    if(e2)e2.className="option "+META[letter].oc;
+    var c2=document.getElementById("card-"+qid);
+    if(c2)c2.className="q-card answered"+(letter==="D"?" grade-d":"");
+    var s2=document.getElementById("qs-"+qid);
+    if(s2){s2.className="q-status "+META[letter].sc;s2.textContent=META[letter].lbl;}
+  }
+  save();prog();summ();
+}
+
+function prog(){
+  var n=Object.keys(answers).length;
+  document.getElementById("progressFill").style.width=Math.round(n/7*100)+"%";
+  document.getElementById("progressPct").textContent=n+" / 7";
+}
+
+function summ(){
+  var n=Object.keys(answers).length;
+  document.getElementById("statR").textContent=n+" / 7";
+  var tm=0,ta=0,ls=0,ln=0,lm={A:0,B:1,C:2,D:3};
+  QUESTIONS.forEach(function(q){
+    var l=answers[q.id];
+    if(l){
+      var ms=q.opts[l].mels||[];
+      ta+=ms.length;
+      ms.forEach(function(m){tm+=countM(m.items);});
+      ls+=lm[l];ln++;
+    }
+  });
+  document.getElementById("statM").textContent=tm;
+  document.getElementById("statA").textContent=ta;
+  document.getElementById("statN").textContent=ln>0?["A","B","C","D"][Math.round(ls/ln)]:"-";
+  var list=document.getElementById("sumList");
+  list.innerHTML="";
+  QUESTIONS.forEach(function(q,i){
+    var l=answers[q.id];
+    var m=l?META[l]:null;
+    var div=document.createElement("div");
+    div.className=l?"sum-item":"sum-item pend";
+    var badge=l
+      ?'<span class="sum-badge" style="background:'+m.bg+';border:1px solid '+m.bc+';color:'+m.co+'">'+l+'</span>'
+      :'<span class="sum-badge" style="background:rgba(90,116,153,.08);border:1px solid rgba(90,116,153,.12);color:var(--muted)">-</span>';
+    var txt=q.text.length>75?q.text.substring(0,75)+"...":q.text;
+    div.innerHTML='<span class="sum-q">Q'+String(i+1).padStart(2,"0")+'</span><span class="sum-text">'+txt+'</span>'+badge;
+    list.appendChild(div);
+  });
+}
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(answers));}catch(e){}}
+
+function load(){
+  try{
+    var raw=localStorage.getItem(KEY);
+    if(!raw)return;
+    var sv=JSON.parse(raw);
+    Object.keys(sv).forEach(function(qid){
+      var l=sv[qid];
+      if(l&&"ABCD".indexOf(l)>=0)pick(qid,l);
+    });
+  }catch(e){}
+}
+
+function exportJSON(){
+  var out={versao:"1.0",ferramenta:"Diagnostico RH Operacoes Bolix / Projeto RESET",exportadoEm:new Date().toISOString(),respostas:answers,detalhe:{}};
+  QUESTIONS.forEach(function(q){
+    var l=answers[q.id]||null;
+    var ms=l?q.opts[l].mels:[];
+    out.detalhe[q.id]={pergunta:q.text,alternativa:l,acoes:ms.map(function(m){return m.ac;}),melhorias:ms.reduce(function(s,m){return s+countM(m.items);},0)};
+  });
+  var blob=new Blob([JSON.stringify(out,null,2)],{type:"application/json"});
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="Diagnostico_RH_Bolix_"+new Date().toISOString().slice(0,10)+".json";
+  a.click();
+  toast("Exportado com sucesso!","ok");
+}
+
+function importTrigger(){document.getElementById("fileInput").click();}
+
+function importJSON(ev){
+  var file=ev.target.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      var src=data.respostas||data.answers||data;
+      clearAll(true);
+      Object.keys(src).forEach(function(qid){
+        var l=src[qid];
+        if(l&&"ABCD".indexOf(l)>=0)pick(qid,l);
+      });
+      toast("Importado com sucesso!","ok");
+    }catch(err){toast("Erro ao importar JSON.","err");}
+  };
+  reader.readAsText(file);
+  ev.target.value="";
+}
+
+function clearAll(silent){
+  Object.keys(answers).forEach(function(qid){
+    var l=answers[qid];
+    var e=document.getElementById("opt-"+qid+"-"+l);
+    if(e)e.className="option";
+    var c=document.getElementById("card-"+qid);
+    if(c)c.className="q-card";
+    var s=document.getElementById("qs-"+qid);
+    if(s){s.className="q-status pend";s.textContent="PENDENTE";}
+    delete answers[qid];
+  });
+  save();prog();summ();
+  if(!silent)toast("Respostas apagadas.","");
+}
+
+function toast(msg,type){
+  var el=document.getElementById("toast");
+  el.textContent=msg;
+  el.className="toast show"+(type?" "+type:"");
+  clearTimeout(el._t);
+  el._t=setTimeout(function(){el.className="toast";},3000);
+}
+
+
+function enviarEmail(){
+  var n=Object.keys(answers).length;
+  if(n===0){toast("Responda ao menos uma questao antes de enviar.","err");return;}
+
+  var lmap={A:"A - Nao iniciado",B:"B - Basico",C:"C - Em progresso",D:"D - Completo"};
+  var lmapN={A:0,B:1,C:2,D:3};
+  var tm=0,ta=0,ls=0,ln=0;
+  var linhas=[];
+
+  QUESTIONS.forEach(function(q,i){
+    var l=answers[q.id];
+    if(!l){linhas.push("Q"+String(i+1).padStart(2,"0")+" | PENDENTE | "+q.text);return;}
+    var ms=q.opts[l].mels||[];
+    ta+=ms.length;
+    ms.forEach(function(m){tm+=countM(m.items);});
+    ls+=lmapN[l];ln++;
+    var linha="Q"+String(i+1).padStart(2,"0")+" | "+lmap[l]+" | "+q.text;
+    if(ms.length>0){
+      ms.forEach(function(m){
+        linha+="\n        Acao: "+m.ac+" | Melhorias: "+m.items+" ("+countM(m.items)+"m) | "+m.desc;
+      });
+    }
+    linhas.push(linha);
+  });
+
+  var nivel=ln>0?["A","B","C","D"][Math.round(ls/ln)]:"-";
+  var data=new Date().toLocaleDateString("pt-BR");
+
+  var body="DIAGNOSTICO RH & OPERACOES — BOLIX / PROJETO RESET\n";
+  body+="Data: "+data+"\n";
+  body+="Respondido por: [preencher nome]\n";
+  body+="Unidade: [preencher unidade]\n";
+  body+="\n========================================\n";
+  body+="RESUMO\n";
+  body+="  Questoes respondidas : "+n+" / 7\n";
+  body+="  Melhorias enderecadas: "+tm+"\n";
+  body+="  Acoes envolvidas     : "+ta+"\n";
+  body+="  Nivel medio          : "+nivel+"\n";
+  body+="========================================\n\n";
+  body+="RESPOSTAS\n\n";
+  linhas.forEach(function(l){body+=l+"\n\n";});
+  body+="========================================\n";
+  body+="Enviado via Questionario RH Bolix / Projeto RESET";
+
+  var subject="Diagnostico RH & Operacoes Bolix — "+data;
+  var mailto="mailto:pentagramabolix@gmail.com?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+  window.location.href=mailto;
+  toast("Abrindo cliente de email...","ok");
+}
+
+buildUI();load();prog();summ();
+</script>
+</body>
+</html>
